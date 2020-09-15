@@ -23,13 +23,13 @@ class SurveyFormViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def default(self, request):
-        survey_form = SurveyForm.objects.get(default=True)
+        survey_form = SurveyForm.objects.filter(default=True).first()
         serialized = SurveyFormSerializer(survey_form, context={ "request": request })
         return Response(serialized.data)
 
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def submit(self, request):
-        survey_form = SurveyForm.objects.get(default=True)
+        survey_form = SurveyForm.objects.filter(default=True).first()
         answers = request.data.get('answers')
         name = request.data.get('name')
         bundle_id = request.data.get('bundle')

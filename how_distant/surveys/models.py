@@ -23,6 +23,9 @@ class SurveyForm(BaseModel):
     form = JSONField(null=True, blank=True)
     default = models.BooleanField(default=False)
 
+    def __str__(self):
+        return "{0} - {1}".format(self.id, self.default)
+
     def submit(self, answers, name=None, bundle=None):
         if not bundle:
             bundle = self.survey_bundles.create()
@@ -34,6 +37,9 @@ class SurveyForm(BaseModel):
 
 class SurveyBundle(BaseModel):
     form = models.ForeignKey(SurveyForm, db_index=True, on_delete=models.CASCADE, related_name="survey_bundles")
+
+    def __str__(self):
+        return "{0} - {1}".format(self.id, self.form.id)
 
     @property
     def summary(self):
@@ -63,3 +69,6 @@ class Survey(TimeStampedModel):
     bundle = models.ForeignKey(SurveyBundle, db_index=True, on_delete=models.CASCADE, related_name="surveys")
     answers = JSONField(null=True, blank=True)
     name = models.CharField(null=True, blank=True, max_length=256)
+
+    def __str__(self):
+        return "{0} - {1} by {2}".format(self.id, self.bundle, self.name)

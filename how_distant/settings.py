@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'how_distant.surveys',
+    'surveys',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -144,3 +144,32 @@ REST_FRAMEWORK = {
     ),
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S.%fZ",
 }
+
+TWILIO_ACCOUNT_SID = env('TWILIO_ACCOUNT_SID', default="secret")
+TWILIO_AUTH_TOKEN = env('TWILIO_AUTH_TOKEN', default="secret")
+SMS_FROM_PHONE = env('SMS_FROM_PHONE', default="123456789")
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'how_distant': {
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }
+
+BROKER_URL = env('BROKER_URL', default="sqla+sqlite:///db.sqlite")
+
+CELERY_BROKER_URL = BROKER_URL
+CELERY_RESULT_BACKEND = BROKER_URL
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE

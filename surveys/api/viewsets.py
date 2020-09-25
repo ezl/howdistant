@@ -4,9 +4,22 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from how_distant.surveys.models import SurveyForm, SurveyBundle
+from surveys.models import SurveyForm, SurveyBundle, Survey
 
-from .serializers import SurveyFormSerializer, SurveyBundleSerializer
+from .serializers import SurveyFormSerializer, SurveyBundleSerializer, SurveySerializer
+class SurveyViewSet(viewsets.ModelViewSet):
+    queryset = Survey.objects.all()
+    serializer_class = SurveySerializer
+    permission_classes = (AllowAny,)
+
+    @action(detail=True, methods=['put'], permission_classes=[AllowAny])
+    def enable_sms_notification(self, request, pk=None):
+        survey = self.get_object()
+        phone_number = request.data.get('phone')
+        formatted = phone_number.replace('(','').replace(')', '').replace(' ', '').replace('-','')
+        survey.phone_number = formatted
+        survey.save()
+        return Response({ "message": "SMS notification enabled."})
 
 class SurveyBundleViewSet(viewsets.ModelViewSet):
     queryset = SurveyBundle.objects.all()
@@ -39,7 +52,11 @@ class SurveyFormViewSet(viewsets.ModelViewSet):
         else:
             bundle = None
 
-        bundle = survey_form.submit(answers, name=name, bundle=bundle)
+        bundle, new_survey = survey_form.submit(answers, name=name, bundle=bundle)
         
         serialized = SurveyBundleSerializer(bundle, context={ "request": request })
-        return Response(serialized.data)
+        data = serialized.data.copy()
+        data.update({
+            "submitted_survey": SurveySerializer(new_survey, context={ "request", request }).data
+        })
+        return Response(data)

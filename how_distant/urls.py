@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf.urls import url, include
 
 from rest_framework import routers
-from how_distant.surveys.api.viewsets import SurveyFormViewSet, SurveyBundleViewSet
+from how_distant.surveys.api.viewsets import SurveyFormViewSet, SurveyBundleViewSet, SurveyViewSet
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -13,6 +13,7 @@ from rest_framework_simplejwt.views import (
 router = routers.DefaultRouter()
 router.register(r'survey_forms', SurveyFormViewSet)
 router.register(r'survey_bundles', SurveyBundleViewSet)
+router.register(r'surveys', SurveyViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

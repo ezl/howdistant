@@ -144,3 +144,23 @@ REST_FRAMEWORK = {
     ),
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S.%fZ",
 }
+
+TWILIO_ACCOUNT_SID = env('TWILIO_ACCOUNT_SID', default="secret")
+TWILIO_AUTH_TOKEN = env('TWILIO_AUTH_TOKEN', default="secret")
+SMS_FROM_PHONE = env('SMS_FROM_PHONE', default="123456789")
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'how_distant': {
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }

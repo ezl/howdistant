@@ -9,7 +9,7 @@ class SurveyFormSerializer(serializers.HyperlinkedModelSerializer):
         model = SurveyForm
         fields = '__all__'
 
-class SurveySeralizer(serializers.HyperlinkedModelSerializer):
+class SurveySerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.CharField(read_only=True)
     
     class Meta:
@@ -18,7 +18,7 @@ class SurveySeralizer(serializers.HyperlinkedModelSerializer):
 
 class SurveyBundleSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.CharField(read_only=True)
-    surveys = SurveySeralizer(many=True)
+    surveys = SurveySerializer(many=True)
     form = SurveyFormSerializer()
     summary = serializers.SerializerMethodField()
 

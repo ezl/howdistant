@@ -3,6 +3,12 @@ import uuid
 
 from django.db import models
 from django.contrib.postgres.fields import JSONField 
+from django.conf import settings
+
+from twilio.rest import Client
+
+if settings.TWILIO_ACCOUNT_SID:
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
 def generate_short_uuid():
     return str(uuid.uuid4())[:8]
@@ -32,8 +38,12 @@ class SurveyForm(BaseModel):
 
         new_survey = Survey.objects.create(answers=answers, name=name, bundle=bundle)
         new_survey.save()
-        
-        return bundle
+
+        for survey in bundle.surveys.exclude(id=new_survey.id):
+            if survey.phone_number:
+                survey.send_sms_notification()
+
+        return bundle, new_survey
 
 class SurveyBundle(BaseModel):
     form = models.ForeignKey(SurveyForm, db_index=True, on_delete=models.CASCADE, related_name="survey_bundles")
@@ -65,10 +75,68 @@ class SurveyBundle(BaseModel):
                         opt['uncomfortable'].append(survey.name)
         return summary
 
-class Survey(TimeStampedModel):
+class Survey(BaseModel):
     bundle = models.ForeignKey(SurveyBundle, db_index=True, on_delete=models.CASCADE, related_name="surveys")
     answers = JSONField(null=True, blank=True)
     name = models.CharField(null=True, blank=True, max_length=256)
+    phone_number = models.CharField(null=True, blank=True, max_length=20)
 
     def __str__(self):
         return "{0} - {1} by {2}".format(self.id, self.bundle, self.name)
+    
+    def send_sms_notification(self, new_survey=None):
+        if not new_survey:
+            new_survey = self.bundle.surveys.order_by('-modified').first()
+
+        sms = SMS.objects.create(
+            survey=self,
+            to_phone=self.phone_number,
+            body="[How Distant] {0} also responded. Check the group results here: https://howdistant.com/survey/{1}/summary".format(
+                new_survey.name,
+                self.bundle.id
+            )
+        )
+        sms.send()
+
+class SMS(BaseModel):
+    STATUS_NEW = "new"
+    STATUS_SENT = "sent"
+    STATUS_ERROR = "error"
+
+    STATUS_CHOICES = (
+        (STATUS_NEW, "new"),
+        (STATUS_SENT, "sent"),
+        (STATUS_ERROR, "error"),
+    )
+
+    TWILIO = "twilio"
+
+    BACKEND_CHOICES = (
+        (TWILIO, "twilio"),
+    )
+    
+    survey = models.ForeignKey(Survey, db_index=True, on_delete=models.CASCADE, related_name="sms")
+    status = models.CharField(choices=STATUS_CHOICES, default=STATUS_NEW, db_index=True, max_length=10)
+    from_phone = models.CharField(max_length=32, default=settings.SMS_FROM_PHONE)
+    to_phone = models.CharField(max_length=32, blank=True, null=True)
+    external_id = models.CharField(max_length=255, db_index=True, null=True, blank=True)
+    body = models.TextField(null=True, blank=True)
+    backend_type = models.CharField(choices=BACKEND_CHOICES, default=TWILIO, max_length=10)
+
+    @property
+    def backend(self):
+        return client
+    
+    def send(self):
+        try:
+            message = self.backend.messages.create(
+                body=self.body,
+                from_="+1{}".format(self.from_phone),
+                to="+1{}".format(self.to_phone)
+            )
+            self.external_id = message.sid
+            self.status = self.STATUS_SENT
+            self.save()
+        except Exception as e:
+            self.status = self.STATUS_ERROR
+            self.save()

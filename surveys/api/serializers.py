@@ -1,7 +1,7 @@
 from django.conf import settings
 from rest_framework import serializers
 
-from how_distant.surveys.models import SurveyForm, SurveyBundle, Survey
+from surveys.models import SurveyForm, SurveyBundle, Survey
 
 class SurveyFormSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.CharField(read_only=True)

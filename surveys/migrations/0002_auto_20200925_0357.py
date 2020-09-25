@@ -3,7 +3,7 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
-import how_distant.surveys.models
+import surveys.models
 import model_utils.fields
 
 
@@ -31,14 +31,14 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='survey',
             name='id',
-            field=models.CharField(default=how_distant.surveys.models.generate_short_uuid, editable=False, max_length=256, primary_key=True, serialize=False),
+            field=models.CharField(default=surveys.models.generate_short_uuid, editable=False, max_length=256, primary_key=True, serialize=False),
         ),
         migrations.CreateModel(
             name='SMS',
             fields=[
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('id', models.CharField(default=how_distant.surveys.models.generate_short_uuid, editable=False, max_length=256, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=surveys.models.generate_short_uuid, editable=False, max_length=256, primary_key=True, serialize=False)),
                 ('is_removed', models.BooleanField(default=False)),
                 ('status', models.CharField(choices=[('new', 'new'), ('sent', 'sent'), ('error', 'error')], db_index=True, default='new', max_length=10)),
                 ('from_phone', models.CharField(default='9293234483', max_length=32)),

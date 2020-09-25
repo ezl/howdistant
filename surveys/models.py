@@ -96,7 +96,10 @@ class Survey(BaseModel):
                 self.bundle.id
             )
         )
-        sms.send()
+
+        from surveys.tasks import send_sms_async
+        send_sms_async.delay(sms.id)
+        
 
 class SMS(BaseModel):
     STATUS_NEW = "new"

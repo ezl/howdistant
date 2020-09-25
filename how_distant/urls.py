@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf.urls import url, include
 
 from rest_framework import routers
-from how_distant.surveys.api.viewsets import SurveyFormViewSet, SurveyBundleViewSet, SurveyViewSet
+from surveys.api.viewsets import SurveyFormViewSet, SurveyBundleViewSet, SurveyViewSet
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,

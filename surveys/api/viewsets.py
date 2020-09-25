@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from how_distant.surveys.models import SurveyForm, SurveyBundle, Survey
+from surveys.models import SurveyForm, SurveyBundle, Survey
 
 from .serializers import SurveyFormSerializer, SurveyBundleSerializer, SurveySerializer
 class SurveyViewSet(viewsets.ModelViewSet):

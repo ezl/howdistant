@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'how_distant.surveys',
+    'surveys',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -164,3 +164,12 @@ SMS_FROM_PHONE = env('SMS_FROM_PHONE', default="123456789")
 #         },
 #     },
 # }
+
+BROKER_URL = env('BROKER_URL', default="sqla+sqlite:///db.sqlite")
+
+CELERY_BROKER_URL = BROKER_URL
+CELERY_RESULT_BACKEND = BROKER_URL
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE

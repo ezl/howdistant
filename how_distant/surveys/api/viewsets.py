@@ -15,7 +15,9 @@ class SurveyViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['put'], permission_classes=[AllowAny])
     def enable_sms_notification(self, request, pk=None):
         survey = self.get_object()
-        survey.phone_number = request.data.get('phone')
+        phone_number = request.data.get('phone')
+        formatted = phone_number.replace('(','').replace(')', '').replace(' ', '').replace('-','')
+        survey.phone_number = formatted
         survey.save()
         return Response({ "message": "SMS notification enabled."})
 

@@ -91,7 +91,7 @@ class Survey(BaseModel):
         sms = SMS.objects.create(
             survey=self,
             to_phone=self.phone_number,
-            body="[How Distant] {0} also responded. Check the group results here: https://howdistant.com/survey/{1}/summary".format(
+            body="[How Distant] {0} also responded. Check the group results here: https://howdistant.com/survey/{1}/summary \n Reply STOP to stop receiving notifications.".format(
                 new_survey.name,
                 self.bundle.id
             )

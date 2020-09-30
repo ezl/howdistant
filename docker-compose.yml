@@ -13,8 +13,8 @@ services:
       - db
       - broker
   worker:
-    build: ./
-    command: celery -A how_distant worker -l INFO
+    build: .
+    command: celery -A how_distant worker -l INFO --uid=nobody --gid=nogroup
     volumes:
       - .:/app/
     env_file: .env

@@ -1,7 +1,7 @@
 # pull official base image
 FROM tiangolo/uwsgi-nginx:python3.8-alpine
 
-ENV UWSGI_INI uwsgi.ini
+ENV UWSGI_INI ./docker/web/uwsgi.ini
 
 ENV STATIC_URL /app/staticfiles
 
@@ -16,6 +16,9 @@ RUN apk update \
 
 # install dependencies
 COPY ./requirements.txt /app/requirements.txt
+COPY ./docker/web/prestart.sh /app/prestart.sh
+COPY ./docker/web/nginx.conf /app/nginx.conf
+
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install -r requirements.txt
 

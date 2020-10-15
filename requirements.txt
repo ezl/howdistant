@@ -9,3 +9,4 @@ django-environ==0.4.5
 djangorestframework-simplejwt==4.4.0
 twilio==6.45.3
 celery[redis]
+sentry-sdk
